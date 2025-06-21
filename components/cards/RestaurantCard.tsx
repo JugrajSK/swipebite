@@ -15,6 +15,15 @@ interface Props {
 }
 
 export default function RestaurantCard({ restaurant }: Props) {
+  console.log('🍽️ RestaurantCard got:', restaurant);
+
+  if (!restaurant || !restaurant.image) {
+    return (
+      <View style={{ padding: 16, alignItems: 'center' }}>
+        <Text>No restaurant data or image</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.card}>
       <Image source={restaurant.image} style={styles.image} />
