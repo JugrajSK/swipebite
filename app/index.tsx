@@ -10,7 +10,7 @@
 
 import React from 'react'
 
-import SwipeScreen from '../screens/SwipeScreen.js'
+import SwipeScreen from '../screens/SwipeScreen'
 
 export default function HomeTab() {
   return <SwipeScreen />
