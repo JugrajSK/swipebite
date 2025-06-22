@@ -1,98 +1,54 @@
-// // screens/SwipeScreen.js
-
 // import React, { useState } from 'react'
-// import { Button, ScrollView, StyleSheet, Text, View } from 'react-native'
+// import { StyleSheet, View, Button } from 'react-native'
 // import Swiper from 'react-native-deck-swiper'
 // import RestaurantCard from '../components/cards/RestaurantCard'
+// import useDeck from '../hooks/useDeck'
 // import restaurants from '../data/restaurants'
+// import SavedScreen from './SavedScreen'
+// import EndOfDeckScreen from './EndOfDeckScreen'
 
 // export default function SwipeScreen() {
-//   const [cards, setCards] = useState(restaurants)
-//   const [saved, setSaved] = useState([])      // store liked IDs
-//   const [skipped, setSkipped] = useState([])  // store skipped objects
-//   const [deckVersion, setDeckVersion] = useState(0)
-//   const [showSaved, setShowSaved] = useState(false)
+//   // deck logic
+//   const {
+//     cards,
+//     saved,
+//     skipped,
+//     deckVersion,
+//     swipeRight,
+//     swipeLeft,
+//     resetSkipped,
+//   } = useDeck(restaurants)
 
-//   // Handlers always act on the first card
-//   const handleSwipeRight = () => {
-//     const [first, ...rest] = cards
-//     if (!first) return
+//   // which view to show
+//   const [view, setView] = useState('swipe')  // 'swipe' | 'saved' | 'end'
 
-//     setSaved(prev => [...prev, first.id])
-//     setCards(rest)
-//     setDeckVersion(v => v + 1)
+//   // 1) Saved‐list view
+//   if (view === 'saved') {
+//     return <SavedScreen savedIds={saved} onBack={() => setView('swipe')} />
 //   }
 
-//   const handleSwipeLeft = () => {
-//     const [first, ...rest] = cards
-//     if (!first) return
-
-//     setSkipped(prev => [...prev, first])
-//     setCards(rest)
-//     setDeckVersion(v => v + 1)
-//   }
-
-//   // Derive full objects for saved list
-//   const savedItems = restaurants.filter(r => saved.includes(r.id))
-
-//   // 1) Saved-list view
-//   if (showSaved) {
+//   // 2) End‐of‐deck view
+//   if (cards.length === 0 || view === 'end') {
 //     return (
-//       <View style={styles.savedContainer}>
-//         <Text style={styles.header}>⭐ Saved Restaurants</Text>
-
-//         {savedItems.length === 0 ? (
-//           <Text style={styles.emptyText}>You haven’t saved any yet.</Text>
-//         ) : (
-//           <ScrollView contentContainerStyle={styles.scrollContainer}>
-//             {savedItems.map(item => (
-//               <RestaurantCard restaurant={item} key={item.id} />
-//             ))}
-//           </ScrollView>
-//         )}
-
-//         <Button title="Back to Swiping" onPress={() => setShowSaved(false)} />
-//       </View>
+//       <EndOfDeckScreen
+//         skippedCount={skipped.length}
+//         savedCount={saved.length}
+//         onReviewSkipped={() => {
+//           resetSkipped()
+//           setView('swipe')
+//         }}
+//         onExtendSearch={() => console.log('Extend search…')}
+//         onViewSaved={() => setView('saved')}
+//       />
 //     )
 //   }
 
-//   // 2) End-of-deck view
-//   if (cards.length === 0) {
-//     return (
-//       <View style={styles.emptyContainer}>
-//         <Text style={styles.emptyText}>
-//           You reached the end of your list!
-//         </Text>
-
-//         <View style={styles.buttonRow}>
-//           <Button
-//             title="Extend Search Area"
-//             onPress={() => console.log('Extend search logic here')}
-//           />
-//           <Button
-//             title={`Review Skipped (${skipped.length})`}
-//             onPress={() => {
-//               setCards(skipped)
-//               setSkipped([])
-//               setDeckVersion(v => v + 1)
-//             }}
-//           />
-//         </View>
-
-//         <Button
-//           title={`View Saved (${savedItems.length})`}
-//           onPress={() => setShowSaved(true)}
-//         />
-//       </View>
-//     )
-//   }
-
-//   // 3) Main swipe-deck view
+//   // 3) Main swipe view
 //   return (
 //     <View style={styles.container}>
 //       <Button
-//         title={`View Saved (${savedItems.length})`}
-//         onPress={() => setShowSaved(true)}
+//         title={`View Saved (${saved.length})`}
+//         onPress={() => setView('saved')}
 //       />
 
 //       <Swiper
@@ -100,72 +56,44 @@
 //         cards={cards}
 //         cardIndex={0}
 //         renderCard={card => <RestaurantCard restaurant={card} />}
-//         onSwipedRight={handleSwipeRight}
-//         onSwipedLeft={handleSwipeLeft}
+//         onSwipedRight={swipeRight}
+//         onSwipedLeft={swipeLeft}
 //         stackSize={3}
 //         stackSeparation={15}
 //         stackScale={5}
 //         backgroundColor="transparent"
+//         verticalSwipe={false}
 //       />
 //     </View>
 //   )
 // }
 
 // const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#f5f5f5',
-//     paddingTop: 10,
-//   },
-//   savedContainer: {
-//     flex: 1,
-//     padding: 20,
-//     backgroundColor: '#fff',
-//   },
-//   header: {
-//     fontSize: 20,
-//     fontWeight: '600',
-//     marginBottom: 12,
-//   },
-//   scrollContainer: {
-//     paddingBottom: 20,
-//     alignItems: 'center',
-//   },
-//   emptyContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   emptyText: {
-//     fontSize: 18,
-//     textAlign: 'center',
-//     color: '#555',
-//     marginBottom: 16,
-//   },
-//   buttonRow: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-around',
-//     width: '100%',
-//     marginBottom: 16,
-//   },
+//   container: { flex: 1, backgroundColor: '#f5f5f5', paddingTop: 10 },
 // })
 
 // screens/SwipeScreen.js
 
 // screens/SwipeScreen.js
 
+// screens/SwipeScreen.js
+
+// screens/SwipeScreen.js
+
 import React, { useState } from 'react'
-import { StyleSheet, View, Button } from 'react-native'
+import { SafeAreaView, StyleSheet, View, Text } from 'react-native'
 import Swiper from 'react-native-deck-swiper'
 import RestaurantCard from '../components/cards/RestaurantCard'
 import useDeck from '../hooks/useDeck'
-import restaurants from '../data/restaurants'
-import SavedScreen from './SavedScreen'
+import SavedListScreen from './SavedListScreen'
+import RestaurantDetailScreen from './RestaurantDetailScreen'
 import EndOfDeckScreen from './EndOfDeckScreen'
+import restaurants from '../data/restaurants'
+import Button from '../components/ui/Button'
+import { Colors, Typography } from '../components/ui/theme'
 
 export default function SwipeScreen() {
-  // deck logic
+  // Deck logic using local data
   const {
     cards,
     saved,
@@ -176,55 +104,114 @@ export default function SwipeScreen() {
     resetSkipped,
   } = useDeck(restaurants)
 
-  // which view to show
-  const [view, setView] = useState('swipe')  // 'swipe' | 'saved' | 'end'
+  // UI view state and selection for detail
+  const [view, setView] = useState('swipe')  // 'swipe' | 'list' | 'detail' | 'end'
+  const [selected, setSelected] = useState(null)
 
-  // 1) Saved‐list view
-  if (view === 'saved') {
-    return <SavedScreen savedIds={saved} onBack={() => setView('swipe')} />
-  }
-
-  // 2) End‐of‐deck view
-  if (cards.length === 0 || view === 'end') {
+  // 1) Saved list view
+  if (view === 'list') {
+    const savedItems = restaurants.filter(r => saved.includes(r.id))
     return (
-      <EndOfDeckScreen
-        skippedCount={skipped.length}
-        savedCount={saved.length}
-        onReviewSkipped={() => {
-          resetSkipped()
-          setView('swipe')
-        }}
-        onExtendSearch={() => console.log('Extend search…')}
-        onViewSaved={() => setView('saved')}
-      />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={Typography.h1}>Saved</Text>
+          <Button title="Back" onPress={() => setView('swipe')} />
+        </View>
+        <SavedListScreen
+          savedItems={savedItems}
+          onBack={() => setView('swipe')}
+          onSelect={item => {
+            setSelected(item)
+            setView('detail')
+          }}
+        />
+      </SafeAreaView>
     )
   }
 
-  // 3) Main swipe view
-  return (
-    <View style={styles.container}>
-      <Button
-        title={`View Saved (${saved.length})`}
-        onPress={() => setView('saved')}
-      />
+  // 2) Detail view for one saved restaurant
+  if (view === 'detail' && selected) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={Typography.h1}>{selected.name}</Text>
+          <Button title="Back" onPress={() => setView('list')} />
+        </View>
+        <RestaurantDetailScreen
+          restaurant={selected}
+          onBack={() => setView('list')}
+        />
+      </SafeAreaView>
+    )
+  }
 
-      <Swiper
-        key={deckVersion}
-        cards={cards}
-        cardIndex={0}
-        renderCard={card => <RestaurantCard restaurant={card} />}
-        onSwipedRight={swipeRight}
-        onSwipedLeft={swipeLeft}
-        stackSize={3}
-        stackSeparation={15}
-        stackScale={5}
-        backgroundColor="transparent"
-        verticalSwipe={false}
-      />
-    </View>
+  // 3) End-of-deck actions
+  if (cards.length === 0 || view === 'end') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <EndOfDeckScreen
+          skippedCount={skipped.length}
+          savedCount={saved.length}
+          onReviewSkipped={() => {
+            resetSkipped()
+            setView('swipe')
+          }}
+          onExtendSearch={() => console.log('Extend search…')}
+          onViewSaved={() => setView('list')}
+        />
+      </SafeAreaView>
+    )
+  }
+
+  // 4) Main swipe deck UI
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={Typography.h1}>Discover</Text>
+        <Button
+          title={`Saved (${saved.length})`}
+          onPress={() => setView('list')}
+          style={styles.headerButton}
+        />
+      </View>
+
+      <View style={styles.swiperContainer}>
+        <Swiper
+          key={deckVersion}
+          cards={cards}
+          renderCard={card => <RestaurantCard restaurant={card} />}
+          onSwipedRight={swipeRight}
+          onSwipedLeft={swipeLeft}
+          stackSize={3}
+          stackScale={5}
+          stackSeparation={15}
+          verticalSwipe={false}
+          backgroundColor="transparent"
+        />
+      </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', paddingTop: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  headerButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  swiperContainer: {
+    flex: 1,
+    paddingTop: 20,
+  },
 })

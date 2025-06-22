@@ -60,6 +60,9 @@ export default [
       { id: 'm2', name: 'Chicken Burrito',  price: '$8.99' },
       { id: 'm3', name: 'Chips & Guac',     price: '$4.50' },
     ],
+      latitude: 43.4643,    // e.g. actual lat/lng of the restaurant
+      longitude: 80.5204,
+
   },
   {
     id: '2',
@@ -81,10 +84,12 @@ export default [
       { id: 'm5', name: 'Spicy Tuna Roll',  price: '$7.50' },
       { id: 'm6', name: 'Miso Soup',         price: '$2.00' },
     ],
+    latitude: 37.7850,
+    longitude: -122.4050,
   },
 
   {
-    id: '2',
+    id: '3',
     name: 'Jugs Corner',
     images: [
       require('/Users/jug/Documents/Tinder-for-Food/TinderFood/Screenshot 2025-06-12 at 10.26.16 AM.png'),
@@ -103,6 +108,8 @@ export default [
       { id: 'm5', name: 'Spicy Tuna Roll',  price: '$7.50' },
       { id: 'm6', name: 'Miso Soup',         price: '$2.00' },
     ],
+    latitude: 37.7749,
+    longitude: -122.4194,
   },
   // …add more restaurants here
 ]
