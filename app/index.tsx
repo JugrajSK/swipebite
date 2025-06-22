@@ -10,7 +10,7 @@
 
 import React from 'react'
 
-import SwipeScreen from '/Users/jug/Documents/Tinder-for-Food/TinderFood/screens/swipescreen.js'
+import SwipeScreen from '../screens/SwipeScreen.js'
 
 export default function HomeTab() {
   return <SwipeScreen />
